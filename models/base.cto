@@ -1,0 +1,50 @@
+/**
+  * A library of standard reusable types
+  */
+
+namespace composer.base
+
+/**
+ * An abstract transaction that is related to a Shipment
+ */
+abstract transaction ShipmentTransaction {
+    o DateTime dateTime
+    --> Shipment shipment
+}
+
+/**
+ * An abstract transaction that is related to receipt of a Shipment
+ */
+abstract transaction ShipmentReceivedTransaction {
+    o DateTime dateTime
+    --> Shipment shipment
+}
+
+/**
+ * An abstract participant type in this business network
+ */
+abstract participant Business identified by email {
+    o String email
+    o Address address
+    o Double accountBalance
+}
+
+/**
+ * A concept for a simple street address
+ */
+concept Address {
+    o String city optional
+    o String country default = "Australia"
+    o String locality optional
+    o String region optional
+    o String street optional
+    o String street2 optional
+    o String street3 optional
+    o String postcode optional
+    o String poBox optional
+}
+
+concept Location {
+    o Double latitude
+    o Double longitude
+}

@@ -1,0 +1,171 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Farm to store food tracking network
+ * 
+ * A business network for shipping perishable goods. The cargo is temperature
+ * controlled, and contracts can be negotiated based on temperature readings.
+ */
+
+namespace org.example.mynetwork
+
+import composer.base.Business
+import composer.base.Location
+import composer.base.ShipmentTransaction
+import composer.base.ShipmentReceivedTransaction
+
+
+/**
+ * The type of perishable product being shipped
+ */
+enum ProductType {
+    o BANANAS
+    o APPLES
+    o PEARS
+    o PEACHES
+    o COFFEE
+}
+
+enum UnitOfMeasure {
+    o ITEMS
+    o KGS
+}
+
+/**
+ * The status of a shipment
+ */
+enum ShipmentStatus {
+    o HARVESTED
+    o IN_TRANSIT_TO_SUPPLIER
+    o RECEIVED_BY_SUPPLIER
+    o IN_TRANSIT_TO_DISTRIBUTOR
+    o RECEIVED_BY_DISTRIBUTOR
+    o IN_TRANSIT_TO_STORE
+    o RECEIVED_AT_STORE
+}
+
+/**
+ * A temperature reading for a shipment; e.g. received from a
+ * device within a temperature controlled shipping container.
+ */
+transaction TemperatureReading extends ShipmentTransaction {
+    o Double celsius
+}
+
+/**
+ * A location reading for a shipment; e.g. received from a
+ * GPS device within a shipping container.
+ */
+transaction LocationReading extends ShipmentTransaction {
+    o Location location
+}
+
+/**
+ * A notification that a shipment has been received by the
+ * supplier and that funds should be transferred from the supplier
+ * to the grower for payment of the shipment.
+ */
+transaction ShipmentReceivedAtSupplier extends ShipmentReceivedTransaction {
+    o Long unitCount
+}
+
+/**
+ * A notification that a shipment has been received by the
+ * distributor and that funds should be transferred from the distributor
+ * to the supplier for payment of the shipment.
+ */
+transaction ShipmentReceivedAtDistributor extends ShipmentReceivedTransaction {
+    o Long unitCount
+}
+
+/**
+ * A notification that a shipment has been received by the
+ * store and that funds should be transferred from the retailer
+ * to the distributor for payment of the shipment.
+ */
+transaction ShipmentReceivedAtStore extends ShipmentReceivedTransaction {
+    o Long unitCount
+}
+
+/**
+ * A shipment being tracked as an asset on the ledger.
+ */
+asset Shipment identified by shipmentId {
+    o String shipmentId
+    o ProductType type
+    o ShipmentStatus status
+    o UnitOfMeasure unitOfMeasure
+    o Long unitCount
+    o TemperatureReading[] temperatureReadings optional
+    o LocationReading[] locationReadings optional
+    o Shipper[] shippers optional
+    o Contract[] contracts
+}
+
+/**
+ * Defines a contract between a Grower and an Importer to ship using
+ * a Shipper, paying a set unit price. The unit price is multiplied by
+ * a penality factor proportional to the deviation from the min and max
+ * negotiated temperatures for the shipment.
+ */
+asset Contract identified by contractId {
+    o String contractId
+    --> Business seller
+    --> Business buyer
+    --> Shipper shipper
+    o Double unitPrice
+    o DateTime expiryDateTime
+    o Double minTemperature
+    o Double maxTemperature
+    o Double minPenaltyFactor
+    o Double maxPenaltyFactor
+}
+
+/**
+ * A Grower is a type of participant in the network
+ */
+participant Grower extends Business {
+}
+
+/**
+ * A Shipper is a type of participant in the network
+ */
+participant Shipper {
+    o String truckId
+}
+
+/**
+ * A Supplier is a type of participant in the network
+ */
+participant Supplier extends Business {
+}
+
+/**
+ * A Distributor is a type of participant in the network
+ */
+participant Distributor extends Business {
+}
+
+/**
+ * A Retailer is a type of participant in the network
+ */
+participant Retailer extends Business {
+}
+
+/**
+ * JUST FOR INITIALIZING A DEMO
+ */
+transaction SetupDemo {
+}
