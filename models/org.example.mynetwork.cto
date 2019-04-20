@@ -21,11 +21,25 @@
 
 namespace org.example.mynetwork
 
+import composer.base.Address
 import composer.base.Business
 import composer.base.Location
-import composer.base.ShipmentTransaction
-import composer.base.ShipmentReceivedTransaction
 
+/**
+ * An abstract transaction that is related to a Shipment
+ */
+abstract transaction ShipmentTransaction {
+    o DateTime dateTime
+    --> Shipment shipment
+}
+
+/**
+ * An abstract transaction that is related to receipt of a Shipment
+ */
+abstract transaction ShipmentReceivedTransaction {
+    o DateTime dateTime
+    --> Shipment shipment
+}
 
 /**
  * The type of perishable product being shipped
@@ -142,7 +156,9 @@ participant Grower extends Business {
 /**
  * A Shipper is a type of participant in the network
  */
-participant Shipper {
+participant Shipper identified by email {
+    o String email
+    o Address address
     o String truckId
 }
 

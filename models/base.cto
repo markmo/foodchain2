@@ -5,25 +5,10 @@
 namespace composer.base
 
 /**
- * An abstract transaction that is related to a Shipment
- */
-abstract transaction ShipmentTransaction {
-    o DateTime dateTime
-    --> Shipment shipment
-}
-
-/**
- * An abstract transaction that is related to receipt of a Shipment
- */
-abstract transaction ShipmentReceivedTransaction {
-    o DateTime dateTime
-    --> Shipment shipment
-}
-
-/**
  * An abstract participant type in this business network
  */
 abstract participant Business identified by email {
+    o String name
     o String email
     o Address address
     o Double accountBalance

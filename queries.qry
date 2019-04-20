@@ -1,0 +1,5 @@
+query selectShipments {
+	description: "Select all shipments"
+	statement:
+		SELECT org.example.mynetwork.Shipment
+}
